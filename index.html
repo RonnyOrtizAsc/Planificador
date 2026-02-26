@@ -277,6 +277,18 @@ return fecha
 
 }
 
+function calcularInicioFase(dep){
+
+if(dep){
+let f=new Date(dep.fin)
+f.setDate(f.getDate()+1)
+return f
+}
+
+return new Date(proyecto.inicio)
+
+}
+
 function calcularFase(dep){
 
 if(!dep) return 1
@@ -299,9 +311,36 @@ return
 
 let dep=actividades.find(a=>a.id==depId)
 
-let inicio=calcularInicio(dep,duracion,trabajadores)
+let inicioFase=calcularInicioFase(dep)
+let inicioReal=calcularInicio(dep,duracion,trabajadores)
 
-let fin=new Date(inicio)
+let disponibles=proyecto.trabajadores - trabajadoresUsados(inicioFase)
+
+if(inicioReal.getTime()!=inicioFase.getTime()){
+
+let mensaje=`
+No hay suficientes trabajadores disponibles.
+
+Actividad: ${nombre}
+
+Inicio de fase: ${inicioFase.toLocaleDateString()}
+Inicio real: ${inicioReal.toLocaleDateString()}
+
+Trabajadores necesarios: ${trabajadores}
+Trabajadores disponibles: ${disponibles}
+
+La actividad se moverá automáticamente.
+`
+
+let continuar=confirm(mensaje)
+
+if(!continuar){
+return
+}
+
+}
+
+let fin=new Date(inicioReal)
 fin.setDate(fin.getDate()+duracion-1)
 
 let fase=calcularFase(dep)
@@ -312,7 +351,7 @@ id:actividades.length+1,
 nombre,
 duracion,
 trabajadores,
-inicio,
+inicio:inicioReal,
 fin,
 depende:depId,
 fase
@@ -409,7 +448,10 @@ scales:{
 x:{
 type:"time",
 time:{
-unit:"day"
+unit:"day",
+displayFormats:{
+day:"MMM d"
+}
 }
 }
 }
