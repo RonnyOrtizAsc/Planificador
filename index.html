@@ -1,467 +1,1126 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Planificador SYM</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-body{
-font-family:Arial;
-margin:20px;
-background:#f5f5f5;
-}
+  *{box-sizing:border-box;margin:0;padding:0}
 
-.caja{
-background:white;
-padding:20px;
-border-radius:10px;
-max-width:1000px;
-margin:auto;
-}
+  :root{
+    --c1:#1a2744;
+    --c2:#2d4a8a;
+    --c3:#4169c4;
+    --c4:#e8edf8;
+    --c5:#f4f6fc;
+    --acc:#f0a500;
+    --acc2:#e05c2a;
+    --red:#c0392b;
+    --green:#1a7a4a;
+    --border:#c8d4e8;
+    --text:#1a2744;
+    --muted:#5a6a8a;
+    --radius:8px;
+    --radius-lg:12px;
+  }
 
-input,select,button{
-margin:5px;
-padding:6px;
-}
+  body{
+    font-family:'IBM Plex Sans',sans-serif;
+    background:linear-gradient(135deg,#0f1e3d 0%,#1a2f5a 50%,#0f1e3d 100%);
+    min-height:100vh;
+    padding:24px 16px;
+    color:var(--text);
+  }
 
-button{
-cursor:pointer;
-}
+  .app{
+    max-width:960px;
+    margin:auto;
+  }
 
-table{
-border-collapse:collapse;
-margin-top:20px;
-width:100%;
-}
+  .header{
+    text-align:center;
+    margin-bottom:28px;
+  }
 
-td,th{
-border:1px solid black;
-padding:6px;
-text-align:center;
-}
+  .header .logo{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:4px;
+    color:#7a9fd4;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
 
-.oculto{
-display:none;
-}
+  .header h1{
+    font-size:28px;
+    font-weight:600;
+    color:#fff;
+    letter-spacing:-0.5px;
+  }
 
-.resumen{
-background:#e8f0ff;
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-}
+  .header p{
+    font-size:13px;
+    color:#7a9fd4;
+    margin-top:4px;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:var(--radius-lg);
+    padding:28px;
+    margin-bottom:20px;
+    border:1px solid var(--border);
+  }
+
+  .card h2{
+    font-size:17px;
+    font-weight:600;
+    color:var(--c1);
+    margin-bottom:20px;
+    padding-bottom:10px;
+    border-bottom:2px solid var(--c4);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .card h2 .step-badge{
+    background:var(--c3);
+    color:#fff;
+    width:24px;height:24px;
+    border-radius:50%;
+    font-size:12px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .form-group{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+
+  .form-group.full{
+    grid-column:1/-1;
+  }
+
+  label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  .tooltip-trigger{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:15px;height:15px;
+    background:var(--c4);
+    border-radius:50%;
+    font-size:10px;
+    color:var(--muted);
+    cursor:help;
+    position:relative;
+  }
+
+  .tooltip-trigger:hover::after{
+    content:attr(data-tip);
+    position:absolute;
+    bottom:calc(100% + 6px);
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--c1);
+    color:#fff;
+    font-size:11px;
+    font-weight:400;
+    padding:5px 10px;
+    border-radius:6px;
+    white-space:nowrap;
+    z-index:100;
+    pointer-events:none;
+    max-width:220px;
+    white-space:normal;
+    text-align:center;
+  }
+
+  input[type=text],input[type=number],input[type=date],select{
+    padding:9px 12px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius);
+    font-family:inherit;
+    font-size:14px;
+    color:var(--text);
+    background:#fff;
+    transition:border-color .15s;
+    width:100%;
+  }
+
+  input:focus,select:focus{outline:none;border-color:var(--c3);}
+  input[type=date]{color-scheme:light;}
+
+  .btn{
+    padding:10px 20px;
+    border-radius:var(--radius);
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    border:none;
+    transition:opacity .15s,transform .1s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--c3);color:#fff;}
+  .btn-primary:hover{opacity:0.9;}
+  .btn-success{background:var(--green);color:#fff;}
+  .btn-success:hover{opacity:0.9;}
+  .btn-ghost{background:var(--c4);color:var(--c2);border:1.5px solid var(--border);}
+  .btn-ghost:hover{background:var(--c5);}
+  .btn-danger{background:#fff;color:var(--red);border:1.5px solid #f0c0bc;}
+  .btn-danger:hover{background:#fdf0ef;}
+
+  .hidden{display:none!important;}
+
+  /* Workers checklist */
+  .workers-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:8px;
+    margin-top:8px;
+  }
+
+  .worker-chip{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:all .15s;
+    background:#fff;
+    user-select:none;
+  }
+
+  .worker-chip:hover{border-color:var(--c3);background:var(--c5);}
+
+  .worker-chip.selected{
+    border-color:var(--c3);
+    background:#eef2ff;
+  }
+
+  .worker-chip.disabled{
+    opacity:0.45;
+    cursor:not-allowed;
+    background:var(--c5);
+  }
+
+  .worker-chip input[type=checkbox]{display:none;}
+
+  .worker-avatar{
+    width:32px;height:32px;
+    border-radius:50%;
+    background:var(--c2);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:600;
+    flex-shrink:0;
+  }
+
+  .worker-info{flex:1;min-width:0;}
+  .worker-name{font-size:13px;font-weight:500;color:var(--text);}
+  .worker-role{font-size:11px;color:var(--muted);}
+  .worker-avail{font-size:10px;color:var(--green);margin-top:1px;}
+  .worker-avail.occupied{color:var(--red);}
+
+  .check-icon{
+    width:18px;height:18px;
+    border-radius:50%;
+    border:1.5px solid var(--border);
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;
+    color:transparent;
+  }
+
+  .worker-chip.selected .check-icon{
+    background:var(--c3);
+    border-color:var(--c3);
+    color:#fff;
+  }
+
+  .select-all-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+
+  /* Activity form */
+  .act-form{
+    background:var(--c5);
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:20px;
+    margin-bottom:20px;
+  }
+
+  .act-form h3{
+    font-size:15px;
+    font-weight:600;
+    color:var(--c1);
+    margin-bottom:16px;
+  }
+
+  .act-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:14px;
+  }
+
+  /* Summary bar */
+  .summary-bar{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+
+  .stat-pill{
+    background:var(--c4);
+    border-radius:20px;
+    padding:6px 14px;
+    font-size:12px;
+    color:var(--c2);
+    font-weight:500;
+  }
+
+  .stat-pill span{font-weight:700;color:var(--c1);}
+  .stat-pill.warn{background:#fff3cd;color:#856404;}
+  .stat-pill.warn span{color:#6c4a00;}
+  .stat-pill.ok{background:#d4edda;color:#155724;}
+  .stat-pill.ok span{color:#0a3319;}
+
+  /* Alerts */
+  .alert{
+    padding:10px 14px;
+    border-radius:var(--radius);
+    font-size:13px;
+    margin-top:10px;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+
+  .alert-warn{background:#fff3cd;border:1px solid #ffc107;color:#856404;}
+  .alert-error{background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;}
+  .alert-info{background:#d1ecf1;border:1px solid #bee5eb;color:#0c5460;}
+
+  /* Table */
+  .table-wrap{overflow-x:auto;margin-top:16px;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+
+  th{
+    background:var(--c1);
+    color:#fff;
+    padding:8px 12px;
+    text-align:left;
+    font-weight:500;
+    font-size:12px;
+    letter-spacing:0.3px;
+  }
+
+  th:first-child{border-radius:6px 0 0 0;}
+  th:last-child{border-radius:0 6px 0 0;}
+
+  td{
+    padding:8px 12px;
+    border-bottom:1px solid var(--c4);
+    color:var(--text);
+    vertical-align:middle;
+  }
+
+  tr:hover td{background:var(--c5);}
+
+  .fase-badge{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:4px;
+    font-size:11px;
+    font-weight:600;
+    background:var(--c3);
+    color:#fff;
+  }
+
+  .worker-tag{
+    display:inline-block;
+    background:var(--c4);
+    color:var(--c2);
+    border-radius:4px;
+    padding:2px 6px;
+    font-size:11px;
+    margin:1px;
+  }
+
+  .btn-del{
+    background:none;border:none;color:var(--red);cursor:pointer;
+    padding:2px 6px;font-size:16px;line-height:1;border-radius:4px;
+  }
+  .btn-del:hover{background:#fdf0ef;}
+
+  /* Gantt */
+  #ganttWrap{
+    position:relative;
+    margin-top:16px;
+    min-height:200px;
+  }
+
+  /* Nav tabs */
+  .nav-tabs{
+    display:flex;
+    gap:4px;
+    margin-bottom:20px;
+    background:var(--c4);
+    padding:4px;
+    border-radius:var(--radius);
+  }
+
+  .nav-tab{
+    flex:1;
+    padding:8px;
+    border:none;
+    background:none;
+    border-radius:6px;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    color:var(--muted);
+    transition:all .15s;
+  }
+
+  .nav-tab.active{
+    background:#fff;
+    color:var(--c1);
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+
+  .btn-row{
+    display:flex;gap:10px;align-items:center;margin-top:20px;flex-wrap:wrap;
+  }
+
+  .dep-info{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+
+  .project-header{
+    background:linear-gradient(90deg,var(--c1),var(--c2));
+    color:#fff;
+    border-radius:var(--radius-lg);
+    padding:16px 24px;
+    margin-bottom:20px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .ph-item{
+    display:flex;flex-direction:column;gap:2px;
+  }
+
+  .ph-item .ph-label{
+    font-size:10px;
+    color:#9ab4d4;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+
+  .ph-item .ph-val{
+    font-size:14px;
+    font-weight:600;
+  }
+
+  .ph-sep{
+    width:1px;
+    background:rgba(255,255,255,0.2);
+    align-self:stretch;
+  }
 
 </style>
-
 </head>
-
 <body>
 
-<div class="caja">
+<div class="app">
 
-<h2>Planificador de Proyecto</h2>
+  <div class="header">
+    <div class="logo">SYM Construcción</div>
+    <h1>Planificador de Proyectos</h1>
+    <p>Sistema de gestión y cronograma de obras</p>
+  </div>
 
-<!-- PASO 1 -->
-<div id="paso1">
+  <!-- PASO 1 -->
+  <div id="paso1">
+    <div class="card">
+      <h2><span class="step-badge">1</span> Datos del Proyecto</h2>
 
-Nombre Proyecto:
-<br>
-<input id="nombreProyecto">
+      <div class="form-grid">
 
-<br><br>
+        <div class="form-group">
+          <label>Nombre del Proyecto
+            <span class="tooltip-trigger" data-tip="Ej: Construcción Casa García, Remodelación Oficina">?</span>
+          </label>
+          <input type="text" id="nombreProyecto" placeholder="Ej: Edificio Residencial Norte">
+        </div>
 
-Ubicación:
-<br>
-<input id="ubicacionProyecto">
+        <div class="form-group">
+          <label>Ubicación
+            <span class="tooltip-trigger" data-tip="Dirección o sector donde se ejecutará el proyecto">?</span>
+          </label>
+          <input type="text" id="ubicacionProyecto" placeholder="Ej: Col. Escalón, San Salvador">
+        </div>
 
-<br><br>
+        <div class="form-group">
+          <label>Fecha de Inicio
+            <span class="tooltip-trigger" data-tip="Primer día de trabajo en el proyecto">?</span>
+          </label>
+          <input type="date" id="fechaInicio">
+        </div>
 
-Fecha Inicio:
-<br>
-<input type="date" id="fechaInicio">
+        <div class="form-group">
+          <label>Fecha Estimada de Fin
+            <span class="tooltip-trigger" data-tip="Fecha límite o entrega del proyecto completo">?</span>
+          </label>
+          <input type="date" id="fechaFinal">
+        </div>
 
-<br><br>
+        <div class="form-group full">
+          <label>Trabajadores del Proyecto
+            <span class="tooltip-trigger" data-tip="Selecciona los trabajadores que participarán en este proyecto. Puedes seleccionar todos con el botón de abajo.">?</span>
+          </label>
 
-Fecha Final:
-<br>
-<input type="date" id="fechaFinal">
+          <div class="select-all-row">
+            <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="toggleTodosWorkers()">
+              ✓ Seleccionar todos
+            </button>
+            <span id="workerCount" style="font-size:12px;color:var(--muted);">0 seleccionados</span>
+          </div>
 
-<br><br>
+          <div class="workers-grid" id="workersGrid"></div>
+        </div>
 
-Trabajadores Totales:
-<br>
-<input type="number" id="trabajadoresTotales" value="5">
+      </div>
 
-<br><br>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="irPaso2()">Continuar al planificador →</button>
+      </div>
+    </div>
+  </div>
 
-<button onclick="irPaso2()">Siguiente</button>
+  <!-- PASO 2 -->
+  <div id="paso2" class="hidden">
 
-</div>
+    <div id="projectHeader" class="project-header"></div>
 
-<!-- PASO 2 -->
-<div id="paso2" class="oculto">
+    <div class="card">
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('planificador',this)">📋 Planificador</button>
+        <button class="nav-tab" onclick="switchTab('gantt',this)">📊 Diagrama Gantt</button>
+      </div>
 
-<button onclick="volver1()">Atrás</button>
+      <!-- Tab: Planificador -->
+      <div id="tab-planificador" class="tab-content active">
 
-<h3>Agregar Actividad</h3>
+        <div class="summary-bar" id="summaryBar"></div>
 
-Nombre:
-<input id="nombreActividad">
+        <!-- Formulario nueva actividad -->
+        <div class="act-form">
+          <h3>➕ Agregar Actividad</h3>
 
-Duración (días):
-<input type="number" id="duracionActividad">
+          <div class="act-grid">
+            <div class="form-group">
+              <label>Nombre de la Actividad
+                <span class="tooltip-trigger" data-tip="Nombre descriptivo de la tarea. Ej: Excavación, Cimientos, Instalación eléctrica">?</span>
+              </label>
+              <input type="text" id="nombreActividad" placeholder="Ej: Colado de losa">
+            </div>
 
-Trabajadores:
-<select id="trabajadoresActividad"></select>
+            <div class="form-group">
+              <label>Duración (días)
+                <span class="tooltip-trigger" data-tip="Cuántos días hábiles tomará completar esta actividad">?</span>
+              </label>
+              <input type="number" id="duracionActividad" min="1" placeholder="Ej: 5">
+            </div>
+          </div>
 
-<br>
+          <div class="form-group" style="margin-top:12px;">
+            <label>Depende de
+              <span class="tooltip-trigger" data-tip="Si esta actividad necesita que otra termine primero, selecciónala aquí. Si es paralela o independiente, elige 'Ninguna'">?</span>
+            </label>
+            <select id="dependencia">
+              <option value="">Ninguna (inicio desde el comienzo del proyecto)</option>
+            </select>
+            <div class="dep-info" id="depInfo"></div>
+          </div>
 
-Depende de:
-<select id="dependencia">
-<option value="">Ninguna</option>
-</select>
+          <div class="form-group" style="margin-top:12px;">
+            <label>Asignar Trabajadores
+              <span class="tooltip-trigger" data-tip="Selecciona quién trabajará en esta actividad. Los trabajadores ocupados se muestran con su disponibilidad.">?</span>
+            </label>
+            <div class="workers-grid" id="workersActividad"></div>
+          </div>
 
-<br>
+          <div id="alertActividad"></div>
 
-<button onclick="agregarActividad()">Agregar Actividad</button>
+          <div class="btn-row">
+            <button class="btn btn-success" onclick="agregarActividad()">+ Agregar actividad</button>
+            <button class="btn btn-ghost" onclick="limpiarFormulario()">Limpiar</button>
+          </div>
+        </div>
 
-<div class="resumen">
-Trabajadores totales:
-<span id="totalTrab"></span>
-</div>
+        <!-- Tabla -->
+        <h3 style="font-size:15px;font-weight:600;color:var(--c1);margin-bottom:10px;">Actividades registradas</h3>
 
-<h3>Tabla Actividades</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fase</th>
+                <th>Actividad</th>
+                <th>Duración</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Trabajadores</th>
+                <th>Depende</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaActividades"></tbody>
+          </table>
+        </div>
 
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Fase</th>
-<th>Nombre</th>
-<th>Duración</th>
-<th>Inicio</th>
-<th>Fin</th>
-<th>Trabajadores</th>
-<th>Depende</th>
-</tr>
-</thead>
+      </div>
 
-<tbody id="tablaActividades"></tbody>
+      <!-- Tab: Gantt -->
+      <div id="tab-gantt" class="tab-content">
+        <div id="ganttWrap">
+          <canvas id="gantt"></canvas>
+        </div>
+        <div id="ganttVacio" style="text-align:center;padding:40px;color:var(--muted);">
+          Agrega actividades para ver el diagrama Gantt
+        </div>
+      </div>
 
-</table>
+    </div>
 
-<h3>Diagrama de Gantt</h3>
-<canvas id="gantt"></canvas>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-ghost" onclick="volver1()" style="font-size:12px;">← Volver a datos del proyecto</button>
+    </div>
 
-</div>
+  </div>
 
 </div>
 
 <script>
 
-let proyecto={}
-let actividades=[]
-let ganttChart=null
+const WORKERS = [
+  {id:1, nombre:"Marvin Enriques",  rol:"Albañil"},
+  {id:2, nombre:"William Enriques", rol:"Albañil"},
+  {id:3, nombre:"Josué Mec",        rol:"Mecánico"},
+  {id:4, nombre:"Misael Pleites",   rol:"Ayudante"},
+  {id:5, nombre:"Roberto Ramírez",  rol:"Maestro de obra"}
+];
+
+let proyecto = {};
+let actividades = [];
+let ganttChart = null;
+let selectedProjectWorkers = new Set();
+let selectedActWorkers = new Set();
+
+function initials(name){
+  return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function avatarColor(id){
+  const colors=['#2d4a8a','#1a7a4a','#b03060','#6a3d9a','#b07020'];
+  return colors[(id-1)%colors.length];
+}
+
+// Build project worker chips
+function buildProjectWorkers(){
+  const grid = document.getElementById('workersGrid');
+  grid.innerHTML='';
+  WORKERS.forEach(w=>{
+    const chip = document.createElement('div');
+    chip.className='worker-chip'+(selectedProjectWorkers.has(w.id)?' selected':'');
+    chip.dataset.id=w.id;
+    chip.innerHTML=`
+      <div class="worker-avatar" style="background:${avatarColor(w.id)}">${initials(w.nombre)}</div>
+      <div class="worker-info">
+        <div class="worker-name">${w.nombre}</div>
+        <div class="worker-role">${w.rol}</div>
+      </div>
+      <div class="check-icon">✓</div>
+    `;
+    chip.onclick=()=>toggleProjectWorker(w.id);
+    grid.appendChild(chip);
+  });
+  updateWorkerCount();
+}
+
+function toggleProjectWorker(id){
+  if(selectedProjectWorkers.has(id)) selectedProjectWorkers.delete(id);
+  else selectedProjectWorkers.add(id);
+  buildProjectWorkers();
+}
+
+function toggleTodosWorkers(){
+  if(selectedProjectWorkers.size===WORKERS.length){
+    selectedProjectWorkers.clear();
+  } else {
+    WORKERS.forEach(w=>selectedProjectWorkers.add(w.id));
+  }
+  buildProjectWorkers();
+}
+
+function updateWorkerCount(){
+  document.getElementById('workerCount').textContent=selectedProjectWorkers.size+' seleccionado'+(selectedProjectWorkers.size!==1?'s':'');
+}
+
+// Get workers in project
+function getProjectWorkers(){
+  return WORKERS.filter(w=>selectedProjectWorkers.has(w.id));
+}
+
+// Check if a worker is free during a range
+function workerLibreDurante(workerId, inicioFecha, duracion, excludeId=null){
+  for(let i=0;i<duracion;i++){
+    let f=new Date(inicioFecha);
+    f.setDate(f.getDate()+i);
+    let ocupado = actividades.some(a=>{
+      if(a.id===excludeId) return false;
+      if(!a.workers.includes(workerId)) return false;
+      return f>=a.inicio && f<=a.fin;
+    });
+    if(ocupado) return false;
+  }
+  return true;
+}
+
+// First available date for a worker after other activities
+function workerDisponibleDesde(workerId){
+  let latest=null;
+  actividades.forEach(a=>{
+    if(a.workers.includes(workerId)){
+      if(!latest || a.fin>latest) latest=new Date(a.fin);
+    }
+  });
+  if(!latest) return null;
+  let d=new Date(latest);
+  d.setDate(d.getDate()+1);
+  return d;
+}
+
+// Build activity worker chips
+function buildActWorkers(depId, duracion){
+  const grid = document.getElementById('workersActividad');
+  grid.innerHTML='';
+  const pw = getProjectWorkers();
+
+  // Calculate proposed start
+  const dep = actividades.find(a=>a.id==depId);
+  let propStart = dep ? new Date(dep.fin) : (proyecto.inicio ? new Date(proyecto.inicio) : new Date());
+  if(dep){ propStart.setDate(propStart.getDate()+1); }
+
+  pw.forEach(w=>{
+    const libre = !duracion || workerLibreDurante(w.id, propStart, duracion||1);
+    const dispDesde = workerDisponibleDesde(w.id);
+    const chip = document.createElement('div');
+    let cls='worker-chip';
+    if(selectedActWorkers.has(w.id)) cls+=' selected';
+    if(!libre && !selectedActWorkers.has(w.id)) cls+=' disabled';
+    chip.className=cls;
+    chip.dataset.id=w.id;
+
+    let availText='';
+    if(!libre){
+      const dateStr = dispDesde ? dispDesde.toLocaleDateString('es-SV',{day:'numeric',month:'short'}) : '';
+      availText=`<div class="worker-avail occupied">Disponible desde ${dateStr}</div>`;
+    } else {
+      availText=`<div class="worker-avail">Disponible</div>`;
+    }
+
+    chip.innerHTML=`
+      <div class="worker-avatar" style="background:${avatarColor(w.id)}">${initials(w.nombre)}</div>
+      <div class="worker-info">
+        <div class="worker-name">${w.nombre}</div>
+        <div class="worker-role">${w.rol}</div>
+        ${availText}
+      </div>
+      <div class="check-icon">✓</div>
+    `;
+    chip.onclick=()=>{
+      if(!libre && !selectedActWorkers.has(w.id)) return;
+      if(selectedActWorkers.has(w.id)) selectedActWorkers.delete(w.id);
+      else selectedActWorkers.add(w.id);
+      buildActWorkers(depId, duracion);
+      checkActAlert();
+    };
+    grid.appendChild(chip);
+  });
+}
+
+// Live update workers when dep or duration changes
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('dependencia').addEventListener('change',()=>{
+    const depId=document.getElementById('dependencia').value;
+    const dur=parseInt(document.getElementById('duracionActividad').value)||1;
+    buildActWorkers(depId, dur);
+    updateDepInfo(depId);
+    checkActAlert();
+  });
+  document.getElementById('duracionActividad').addEventListener('input',()=>{
+    const depId=document.getElementById('dependencia').value;
+    const dur=parseInt(document.getElementById('duracionActividad').value)||1;
+    buildActWorkers(depId, dur);
+    checkActAlert();
+  });
+  // Set today's date as default for start
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaInicio').value = today;
+  buildProjectWorkers();
+});
+
+function updateDepInfo(depId){
+  const info=document.getElementById('depInfo');
+  if(!depId){
+    info.textContent='Esta actividad comenzará desde el inicio del proyecto';
+    return;
+  }
+  const dep=actividades.find(a=>a.id==depId);
+  if(dep){
+    const d=new Date(dep.fin);
+    d.setDate(d.getDate()+1);
+    info.textContent=`Comenzará el ${d.toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+  }
+}
+
+function checkActAlert(){
+  const alert=document.getElementById('alertActividad');
+  const dur=parseInt(document.getElementById('duracionActividad').value)||0;
+  if(selectedActWorkers.size===0 && dur>0){
+    alert.innerHTML=`<div class="alert alert-info">Selecciona al menos un trabajador para esta actividad.</div>`;
+    return;
+  }
+  alert.innerHTML='';
+}
 
 function irPaso2(){
+  const nombre=document.getElementById('nombreProyecto').value.trim();
+  const ubi=document.getElementById('ubicacionProyecto').value.trim();
+  const ini=document.getElementById('fechaInicio').value;
+  const fin=document.getElementById('fechaFinal').value;
 
-proyecto.nombre=document.getElementById("nombreProyecto").value
-proyecto.ubicacion=document.getElementById("ubicacionProyecto").value
-proyecto.inicio=new Date(document.getElementById("fechaInicio").value)
-proyecto.fin=new Date(document.getElementById("fechaFinal").value)
-proyecto.trabajadores=parseInt(document.getElementById("trabajadoresTotales").value)
+  if(!nombre){ alert('Por favor ingresa el nombre del proyecto'); return; }
+  if(!ini){ alert('Por favor ingresa la fecha de inicio'); return; }
+  if(selectedProjectWorkers.size===0){ alert('Selecciona al menos un trabajador'); return; }
 
-if(!proyecto.nombre){
-alert("Falta nombre")
-return
+  proyecto.nombre=nombre;
+  proyecto.ubicacion=ubi;
+  proyecto.inicio=new Date(ini+'T00:00:00');
+  proyecto.fin=fin ? new Date(fin+'T00:00:00') : null;
+
+  document.getElementById('paso1').classList.add('hidden');
+  document.getElementById('paso2').classList.remove('hidden');
+
+  renderProjectHeader();
+  actualizarDependencias();
+  buildActWorkers('',1);
+  updateDepInfo('');
+  actualizarSummary();
+  dibujarTabla();
 }
 
-if(!proyecto.inicio){
-alert("Falta fecha inicio")
-return
-}
-
-document.getElementById("paso1").classList.add("oculto")
-document.getElementById("paso2").classList.remove("oculto")
-
-document.getElementById("totalTrab").innerText=proyecto.trabajadores
-
-actualizarSelectTrabajadores()
-
+function renderProjectHeader(){
+  const h=document.getElementById('projectHeader');
+  const ini=proyecto.inicio.toLocaleDateString('es-SV',{day:'numeric',month:'short',year:'numeric'});
+  const fin=proyecto.fin ? proyecto.fin.toLocaleDateString('es-SV',{day:'numeric',month:'short',year:'numeric'}) : 'Por definir';
+  const names=getProjectWorkers().map(w=>w.nombre.split(' ')[0]).join(', ');
+  h.innerHTML=`
+    <div class="ph-item">
+      <span class="ph-label">Proyecto</span>
+      <span class="ph-val">${proyecto.nombre}</span>
+    </div>
+    <div class="ph-sep"></div>
+    <div class="ph-item">
+      <span class="ph-label">Ubicación</span>
+      <span class="ph-val">${proyecto.ubicacion||'—'}</span>
+    </div>
+    <div class="ph-sep"></div>
+    <div class="ph-item">
+      <span class="ph-label">Inicio</span>
+      <span class="ph-val">${ini}</span>
+    </div>
+    <div class="ph-sep"></div>
+    <div class="ph-item">
+      <span class="ph-label">Fin estimado</span>
+      <span class="ph-val">${fin}</span>
+    </div>
+    <div class="ph-sep"></div>
+    <div class="ph-item">
+      <span class="ph-label">Equipo</span>
+      <span class="ph-val">${names}</span>
+    </div>
+  `;
 }
 
 function volver1(){
-document.getElementById("paso2").classList.add("oculto")
-document.getElementById("paso1").classList.remove("oculto")
+  document.getElementById('paso2').classList.add('hidden');
+  document.getElementById('paso1').classList.remove('hidden');
 }
 
-function actualizarSelectTrabajadores(){
-
-let sel=document.getElementById("trabajadoresActividad")
-sel.innerHTML=""
-
-for(let i=1;i<=proyecto.trabajadores;i++){
-
-let op=document.createElement("option")
-op.value=i
-op.text=i
-
-sel.appendChild(op)
-
-}
-
-}
-
-function trabajadoresUsados(fecha){
-
-let usados=0
-
-actividades.forEach(a=>{
-
-if(fecha>=a.inicio && fecha<=a.fin){
-usados+=a.trabajadores
-}
-
-})
-
-return usados
-
-}
-
-function trabajadoresDisponibles(inicio,duracion,trab){
-
-for(let i=0;i<duracion;i++){
-
-let f=new Date(inicio)
-f.setDate(f.getDate()+i)
-
-let usados=trabajadoresUsados(f)
-
-if(usados+trab>proyecto.trabajadores){
-return false
-}
-
-}
-
-return true
-
-}
-
-function calcularInicio(dep,duracion,trab){
-
-let fecha
-
-if(dep){
-fecha=new Date(dep.fin)
-fecha.setDate(fecha.getDate()+1)
-}
-else{
-fecha=new Date(proyecto.inicio)
-}
-
-while(!trabajadoresDisponibles(fecha,duracion,trab)){
-
-fecha.setDate(fecha.getDate()+1)
-
-if(proyecto.fin && fecha>proyecto.fin){
-break
-}
-
-}
-
-return fecha
-
-}
-
-function calcularInicioFase(dep){
-
-if(dep){
-let f=new Date(dep.fin)
-f.setDate(f.getDate()+1)
-return f
-}
-
-return new Date(proyecto.inicio)
-
-}
-
-function calcularFase(dep){
-
-if(!dep) return 1
-
-return dep.fase+1
-
-}
-
-function agregarActividad(){
-
-let nombre=document.getElementById("nombreActividad").value
-let duracion=parseInt(document.getElementById("duracionActividad").value)
-let trabajadores=parseInt(document.getElementById("trabajadoresActividad").value)
-let depId=document.getElementById("dependencia").value
-
-if(!nombre || !duracion){
-alert("Faltan datos")
-return
-}
-
-let dep=actividades.find(a=>a.id==depId)
-
-let inicioFase=calcularInicioFase(dep)
-let inicioReal=calcularInicio(dep,duracion,trabajadores)
-
-let disponibles=proyecto.trabajadores - trabajadoresUsados(inicioFase)
-
-if(inicioReal.getTime()!=inicioFase.getTime()){
-
-let mensaje=`
-No hay suficientes trabajadores disponibles.
-
-Actividad: ${nombre}
-
-Inicio de fase: ${inicioFase.toLocaleDateString()}
-Inicio real: ${inicioReal.toLocaleDateString()}
-
-Trabajadores necesarios: ${trabajadores}
-Trabajadores disponibles: ${disponibles}
-
-La actividad se moverá automáticamente.
-`
-
-let continuar=confirm(mensaje)
-
-if(!continuar){
-return
-}
-
-}
-
-let fin=new Date(inicioReal)
-fin.setDate(fin.getDate()+duracion-1)
-
-let fase=calcularFase(dep)
-
-let actividad={
-
-id:actividades.length+1,
-nombre,
-duracion,
-trabajadores,
-inicio:inicioReal,
-fin,
-depende:depId,
-fase
-
-}
-
-actividades.push(actividad)
-
-actualizarDependencias()
-dibujarTabla()
-dibujarGantt()
-limpiarFormulario()
-
-}
-
-function limpiarFormulario(){
-
-document.getElementById("nombreActividad").value=""
-document.getElementById("duracionActividad").value=""
-
+function switchTab(tab,btn){
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='gantt') dibujarGantt();
 }
 
 function actualizarDependencias(){
+  const sel=document.getElementById('dependencia');
+  sel.innerHTML='<option value="">Ninguna (inicio desde el comienzo del proyecto)</option>';
+  actividades.forEach(a=>{
+    const op=document.createElement('option');
+    op.value=a.id;
+    op.text=`${a.nombre} (termina ${a.fin.toLocaleDateString('es-SV',{day:'numeric',month:'short'})})`;
+    sel.appendChild(op);
+  });
+}
 
-let sel=document.getElementById("dependencia")
+function calcularInicio(dep){
+  if(dep){
+    const f=new Date(dep.fin);
+    f.setDate(f.getDate()+1);
+    return f;
+  }
+  return new Date(proyecto.inicio);
+}
 
-sel.innerHTML="<option value=''>Ninguna</option>"
+function calcularFase(dep){
+  if(!dep) return 1;
+  return dep.fase+1;
+}
 
-actividades.forEach(a=>{
+function agregarActividad(){
+  const nombre=document.getElementById('nombreActividad').value.trim();
+  const duracion=parseInt(document.getElementById('duracionActividad').value);
+  const depId=document.getElementById('dependencia').value;
 
-let op=document.createElement("option")
-op.value=a.id
-op.text=a.nombre
+  if(!nombre){ alert('Ingresa el nombre de la actividad'); return; }
+  if(!duracion||duracion<1){ alert('Ingresa una duración válida'); return; }
+  if(selectedActWorkers.size===0){ alert('Selecciona al menos un trabajador'); return; }
 
-sel.appendChild(op)
+  // Validate duration doesn't exceed project window
+  const dep=actividades.find(a=>a.id==depId);
+  const inicio=calcularInicio(dep);
+  const fin=new Date(inicio);
+  fin.setDate(fin.getDate()+duracion-1);
 
-})
+  if(proyecto.fin && fin>proyecto.fin){
+    const ok=confirm(`La actividad termina el ${fin.toLocaleDateString('es-SV')} y supera la fecha fin del proyecto (${proyecto.fin.toLocaleDateString('es-SV')}). ¿Continuar de todas formas?`);
+    if(!ok) return;
+  }
 
+  // Check workers available for whole duration
+  const bloqueados=[];
+  selectedActWorkers.forEach(wid=>{
+    if(!workerLibreDurante(wid,inicio,duracion)){
+      const w=WORKERS.find(x=>x.id===wid);
+      if(w) bloqueados.push(w.nombre);
+    }
+  });
+
+  if(bloqueados.length>0){
+    alert(`Los siguientes trabajadores no están disponibles durante todo el período:\n${bloqueados.join('\n')}\n\nAjusta la fecha de inicio o el trabajador.`);
+    return;
+  }
+
+  const fase=calcularFase(dep);
+  const workers=[...selectedActWorkers];
+
+  const act={
+    id:actividades.length+1,
+    nombre,
+    duracion,
+    workers,
+    inicio,
+    fin,
+    depende:depId||null,
+    fase
+  };
+
+  actividades.push(act);
+  actualizarDependencias();
+  dibujarTabla();
+  actualizarSummary();
+  limpiarFormulario();
+}
+
+function limpiarFormulario(){
+  document.getElementById('nombreActividad').value='';
+  document.getElementById('duracionActividad').value='';
+  document.getElementById('dependencia').value='';
+  selectedActWorkers.clear();
+  buildActWorkers('',1);
+  document.getElementById('depInfo').textContent='Esta actividad comenzará desde el inicio del proyecto';
+  document.getElementById('alertActividad').innerHTML='';
+}
+
+function eliminarActividad(id){
+  actividades=actividades.filter(a=>a.id!==id);
+  actualizarDependencias();
+  dibujarTabla();
+  actualizarSummary();
+}
+
+function actualizarSummary(){
+  const bar=document.getElementById('summaryBar');
+  const total=getProjectWorkers().length;
+  const activas=actividades.length;
+
+  // Count workers busy today
+  const hoy=new Date();
+  let ocupadosHoy=new Set();
+  actividades.forEach(a=>{
+    if(hoy>=a.inicio&&hoy<=a.fin) a.workers.forEach(w=>ocupadosHoy.add(w));
+  });
+
+  bar.innerHTML=`
+    <div class="stat-pill">Actividades: <span>${activas}</span></div>
+    <div class="stat-pill">Equipo del proyecto: <span>${total} trabajadores</span></div>
+    <div class="stat-pill ${ocupadosHoy.size>0?'warn':'ok'}">Ocupados hoy: <span>${ocupadosHoy.size}</span></div>
+  `;
 }
 
 function dibujarTabla(){
-
-let tabla=document.getElementById("tablaActividades")
-
-tabla.innerHTML=""
-
-actividades.forEach(a=>{
-
-let tr=document.createElement("tr")
-
-tr.innerHTML=`
-<td>${a.id}</td>
-<td>${a.fase}</td>
-<td>${a.nombre}</td>
-<td>${a.duracion}</td>
-<td>${a.inicio.toLocaleDateString()}</td>
-<td>${a.fin.toLocaleDateString()}</td>
-<td>${a.trabajadores}</td>
-<td>${a.depende || "-"}</td>
-`
-
-tabla.appendChild(tr)
-
-})
-
+  const tbody=document.getElementById('tablaActividades');
+  tbody.innerHTML='';
+  if(actividades.length===0){
+    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">No hay actividades. Agrega la primera arriba.</td></tr>';
+    return;
+  }
+  actividades.forEach(a=>{
+    const depNombre=a.depende ? (actividades.find(x=>x.id==a.depende)||{}).nombre||'—' : '—';
+    const workerNames=a.workers.map(wid=>{
+      const w=WORKERS.find(x=>x.id===wid);
+      return w ? `<span class="worker-tag">${w.nombre.split(' ')[0]}</span>` : '';
+    }).join('');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${a.id}</td>
+      <td><span class="fase-badge">F${a.fase}</span></td>
+      <td style="font-weight:500">${a.nombre}</td>
+      <td>${a.duracion}d</td>
+      <td>${a.inicio.toLocaleDateString('es-SV',{day:'2-digit',month:'short'})}</td>
+      <td>${a.fin.toLocaleDateString('es-SV',{day:'2-digit',month:'short'})}</td>
+      <td>${workerNames}</td>
+      <td style="color:var(--muted);font-size:12px">${depNombre}</td>
+      <td><button class="btn-del" title="Eliminar actividad" onclick="eliminarActividad(${a.id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 function dibujarGantt(){
+  const vacio=document.getElementById('ganttVacio');
+  if(actividades.length===0){
+    vacio.style.display='block';
+    return;
+  }
+  vacio.style.display='none';
 
-let ctx=document.getElementById("gantt")
+  const ctx=document.getElementById('gantt');
+  if(ganttChart) ganttChart.destroy();
 
-if(ganttChart){
-ganttChart.destroy()
+  const colors=[
+    'rgba(65,105,196,0.85)',
+    'rgba(26,122,74,0.85)',
+    'rgba(176,48,96,0.85)',
+    'rgba(106,61,154,0.85)',
+    'rgba(176,112,32,0.85)'
+  ];
+
+  const data=actividades.map((a,i)=>({
+    x:[a.inicio.getTime(),new Date(a.fin.getTime()+86400000).getTime()],
+    y:a.nombre,
+    backgroundColor:colors[i%colors.length]
+  }));
+
+  ganttChart=new Chart(ctx,{
+    type:'bar',
+    data:{datasets:[{data,barThickness:22,borderRadius:4,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:ctx=>{
+              const d=ctx.raw;
+              const s=new Date(d.x[0]).toLocaleDateString('es-SV');
+              const e=new Date(d.x[1]-86400000).toLocaleDateString('es-SV');
+              return `${s} → ${e}`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          type:'time',
+          time:{unit:'day',displayFormats:{day:'dd MMM'}},
+          title:{display:true,text:'Fecha',font:{size:11}},
+          ticks:{font:{size:11}},
+          grid:{color:'rgba(0,0,0,0.05)'}
+        },
+        y:{
+          ticks:{font:{size:12}},
+          grid:{display:false}
+        }
+      }
+    }
+  });
 }
 
-let data=actividades.map(a=>({
-x:[a.inicio.getTime(),a.fin.getTime()],
-y:a.nombre
-}))
-
-ganttChart=new Chart(ctx,{
-
-type:"bar",
-
-data:{
-datasets:[{
-data:data
-}]
-},
-
-options:{
-indexAxis:"y",
-scales:{
-x:{
-type:"time",
-time:{
-unit:"day",
-displayFormats:{
-day:"MMM d"
-}
-}
-}
-}
-}
-
-})
-
-}
+buildProjectWorkers();
 
 </script>
-
 </body>
 </html>
