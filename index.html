@@ -79,36 +79,17 @@ input[type=date]{color-scheme:light;}
 .hidden{display:none!important;}
 
 /* ── PANTALLA DE INICIO ── */
-.welcome-screen{
-  display:flex;flex-direction:column;gap:16px;
-}
+.welcome-screen{display:flex;flex-direction:column;gap:16px;}
 .welcome-title{font-size:16px;font-weight:600;color:var(--c1);margin-bottom:8px;}
 .welcome-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.welcome-card{
-  border:2px solid var(--border);
-  border-radius:var(--radius-lg);
-  padding:20px;
-  cursor:pointer;
-  transition:all .2s;
-  text-align:center;
-  background:#fff;
-}
+.welcome-card{border:2px solid var(--border);border-radius:var(--radius-lg);padding:20px;cursor:pointer;transition:all .2s;text-align:center;background:#fff;}
 .welcome-card:hover{border-color:var(--c3);background:var(--c5);}
 .welcome-card .wc-icon{font-size:32px;margin-bottom:8px;}
 .welcome-card .wc-title{font-size:15px;font-weight:600;color:var(--c1);margin-bottom:4px;}
 .welcome-card .wc-sub{font-size:12px;color:var(--muted);}
 
 .saved-list{margin-top:4px;}
-.saved-item{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius);
-  margin-bottom:8px;
-  cursor:pointer;
-  transition:all .15s;
-  background:#fff;
-}
+.saved-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:all .15s;background:#fff;}
 .saved-item:hover{border-color:var(--c3);background:var(--c5);}
 .saved-item .si-info{flex:1;min-width:0;}
 .saved-item .si-name{font-size:14px;font-weight:500;color:var(--c1);}
@@ -117,8 +98,33 @@ input[type=date]{color-scheme:light;}
 .si-del{background:none;border:none;color:var(--red);cursor:pointer;padding:4px 8px;border-radius:4px;font-size:14px;}
 .si-del:hover{background:#fdf0ef;}
 
+/* ── COLLAPSIBLE SECTIONS ── */
+.collapsible-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+  background:var(--c5);border:1.5px solid var(--border);
+  border-radius:var(--radius);cursor:pointer;
+  transition:all .15s;user-select:none;
+  margin-bottom:0;
+}
+.collapsible-header:hover{background:var(--c4);border-color:var(--c3);}
+.collapsible-header.open{border-radius:var(--radius) var(--radius) 0 0;border-bottom-color:transparent;background:var(--c4);}
+.collapsible-title{font-size:13px;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:8px;}
+.collapsible-arrow{font-size:12px;color:var(--muted);transition:transform .2s;}
+.collapsible-header.open .collapsible-arrow{transform:rotate(180deg);}
+.collapsible-body{
+  border:1.5px solid var(--border);border-top:none;
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:14px;
+  display:none;
+}
+.collapsible-body.open{display:block;}
+
 /* ── Workers ── */
 .workers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px;}
+/* drag-select on workers */
+.workers-grid{user-select:none;}
+
 .worker-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:#fff;user-select:none;}
 .worker-chip:hover{border-color:var(--c3);background:var(--c5);}
 .worker-chip.selected{border-color:var(--c3);background:#eef2ff;}
@@ -134,26 +140,30 @@ input[type=date]{color-scheme:light;}
 .worker-chip.selected .check-icon{background:var(--c3);border-color:var(--c3);color:#fff;}
 .select-all-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 
-/* Shift selector */
-.shift-selector{
-  display:flex;gap:6px;margin-top:8px;
-}
+/* ── SHIFT SELECTOR — only Diurno / Nocturno, both selectable ── */
+.shift-selector{display:flex;gap:6px;margin-top:8px;}
 .shift-btn{
-  flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);
-  font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;background:#fff;
+  flex:1;padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--radius);
+  font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;background:#fff;
   color:var(--muted);transition:all .15s;text-align:center;
 }
 .shift-btn.active-d{border-color:#f0a500;background:#fff8e7;color:#6c4a00;}
 .shift-btn.active-n{border-color:#4169c4;background:#eef2ff;color:var(--c2);}
-.shift-btn.active-b{border-color:var(--green);background:#d4edda;color:var(--green);}
 .shift-note{font-size:11px;color:var(--muted);margin-top:4px;}
 
-/* Activity type recommendations */
+/* ── Rec panel sugested activities (with eye toggle) ── */
 .rec-panel{
-  background:var(--c5);border:1.5px solid var(--border);border-radius:var(--radius);
-  padding:12px;margin-bottom:14px;
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  margin-bottom:14px;overflow:hidden;
 }
-.rec-panel h4{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.rec-panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--c5);cursor:pointer;
+  transition:background .15s;
+}
+.rec-panel-header:hover{background:var(--c4);}
+.rec-panel-body{padding:12px 14px;display:none;}
+.rec-panel-body.open{display:block;}
 .rec-tags{display:flex;flex-wrap:wrap;gap:6px;}
 .rec-tag{
   padding:4px 10px;border-radius:20px;font-size:12px;
@@ -161,6 +171,12 @@ input[type=date]{color-scheme:light;}
   cursor:pointer;transition:all .15s;
 }
 .rec-tag:hover{border-color:var(--c3);background:#eef2ff;color:var(--c1);}
+.rec-tag-add{
+  padding:4px 10px;border-radius:20px;font-size:12px;
+  background:#d4edda;color:var(--green);border:1.5px solid #a3d9b3;
+  cursor:pointer;transition:all .15s;
+}
+.rec-tag-add:hover{background:#c3e6cb;border-color:var(--green);}
 
 /* Act form */
 .act-form{background:var(--c5);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;}
@@ -195,7 +211,6 @@ tr:hover td{background:var(--c5);}
 .worker-tag{display:inline-block;background:var(--c4);color:var(--c2);border-radius:4px;padding:2px 6px;font-size:11px;margin:1px;}
 .shift-tag-d{display:inline-block;background:#fff8e7;color:#6c4a00;border-radius:4px;padding:1px 5px;font-size:10px;margin-left:3px;}
 .shift-tag-n{display:inline-block;background:#eef2ff;color:var(--c2);border-radius:4px;padding:1px 5px;font-size:10px;margin-left:3px;}
-.shift-tag-b{display:inline-block;background:#d4edda;color:var(--green);border-radius:4px;padding:1px 5px;font-size:10px;margin-left:3px;}
 .btn-del{background:none;border:none;color:var(--red);cursor:pointer;padding:2px 6px;font-size:16px;line-height:1;border-radius:4px;}
 .btn-del:hover{background:#fdf0ef;}
 
@@ -222,13 +237,53 @@ tr:hover td{background:var(--c5);}
 .save-status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;opacity:0;transition:opacity .5s;}
 .save-status.show{opacity:1;}
 
-/* Project type selector */
-.proj-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px;}
+/* Project type selector – collapsible */
+.proj-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:4px;}
 .proj-type-chip{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:#fff;text-align:center;}
 .proj-type-chip:hover{border-color:var(--c3);background:var(--c5);}
 .proj-type-chip.selected{border-color:var(--c3);background:#eef2ff;}
 .proj-type-chip .ptc-icon{font-size:22px;margin-bottom:4px;}
 .proj-type-chip .ptc-name{font-size:12px;font-weight:500;color:var(--c1);}
+
+/* ── SUNDAY SELECTOR ── */
+.sunday-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;
+  background:#fff8e7;border:1.5px solid #f0c060;
+  border-radius:var(--radius);font-size:13px;color:#6c4a00;
+  margin-top:10px;
+}
+.sunday-toggle{
+  position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;
+}
+.sunday-toggle input{opacity:0;width:0;height:0;}
+.sunday-slider{
+  position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;
+  background:#ccc;border-radius:22px;transition:.3s;
+}
+.sunday-slider:before{
+  position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;
+  background:white;border-radius:50%;transition:.3s;
+}
+.sunday-toggle input:checked + .sunday-slider{background:var(--green);}
+.sunday-toggle input:checked + .sunday-slider:before{transform:translateX(16px);}
+
+/* ── MODAL / CONFIRM ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.show{opacity:1;pointer-events:auto;}
+.modal-box{
+  background:#fff;border-radius:var(--radius-lg);padding:28px;
+  max-width:420px;width:90%;
+  transform:scale(0.95);transition:transform .2s;
+}
+.modal-overlay.show .modal-box{transform:scale(1);}
+.modal-title{font-size:17px;font-weight:600;color:var(--c1);margin-bottom:8px;}
+.modal-body{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
 
 /* Toast */
 .toast{
@@ -238,7 +293,7 @@ tr:hover td{background:var(--c5);}
   font-size:13px;font-weight:500;
   box-shadow:0 4px 20px rgba(0,0,0,0.3);
   transform:translateY(80px);opacity:0;
-  transition:all .3s;z-index:9999;
+  transition:all .3s;z-index:9998;
   display:flex;align-items:center;gap:8px;
 }
 .toast.show{transform:translateY(0);opacity:1;}
@@ -249,6 +304,7 @@ tr:hover td{background:var(--c5);}
   .form-grid{grid-template-columns:1fr;}
   .welcome-options{grid-template-columns:1fr;}
   .export-row{flex-direction:column;}
+  .act-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -262,7 +318,9 @@ tr:hover td{background:var(--c5);}
     <p>Sistema de gestión y cronograma de obras · Servicios y Más</p>
   </div>
 
-  <!-- PANTALLA 0: INICIO -->
+  <!-- ══════════════════════════════════════════════
+       PANTALLA 0: INICIO
+  ══════════════════════════════════════════════ -->
   <div id="paso0">
     <div class="card">
       <h2><span class="step-badge">☰</span> Inicio</h2>
@@ -288,7 +346,9 @@ tr:hover td{background:var(--c5);}
     </div>
   </div>
 
-  <!-- PASO 1: DATOS DEL PROYECTO -->
+  <!-- ══════════════════════════════════════════════
+       PASO 1: DATOS DEL PROYECTO
+  ══════════════════════════════════════════════ -->
   <div id="paso1" class="hidden">
     <div class="card">
       <h2><span class="step-badge">1</span> Datos del Proyecto</h2>
@@ -311,14 +371,34 @@ tr:hover td{background:var(--c5);}
           <input type="date" id="fechaFinal">
         </div>
 
-        <!-- TIPO DE PROYECTO -->
+        <!-- TIPO DE PROYECTO — collapsible -->
         <div class="form-group full">
           <label>Tipo de Proyecto <span class="tooltip-trigger" data-tip="Opcional. Seleccionar el tipo permite que el sistema recomiende actividades comunes para ese rubro.">?</span> <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;">(opcional)</span></label>
-          <div class="proj-type-grid" id="projTypeGrid"></div>
+          <div class="collapsible-header" id="projTypeHeader" onclick="toggleCollapsible('projType')">
+            <span class="collapsible-title" id="projTypeLabel">
+              <span>🏷️</span> <span id="projTypeLabelText">Seleccionar tipo de proyecto…</span>
+            </span>
+            <span class="collapsible-arrow">▼</span>
+          </div>
+          <div class="collapsible-body" id="projTypeBody">
+            <div class="proj-type-grid" id="projTypeGrid"></div>
+          </div>
         </div>
 
+        <!-- DOMINGO -->
         <div class="form-group full">
-          <label>Trabajadores del Proyecto <span class="tooltip-trigger" data-tip="Selecciona los trabajadores que participarán en este proyecto.">?</span></label>
+          <div class="sunday-row">
+            <label class="sunday-toggle">
+              <input type="checkbox" id="trabajarDomingo">
+              <span class="sunday-slider"></span>
+            </label>
+            <span>🗓️ <strong>Trabajar domingos</strong> &mdash; por defecto el domingo es día de descanso. Activa esto si el proyecto requiere trabajar en domingos.</span>
+          </div>
+        </div>
+
+        <!-- TRABAJADORES -->
+        <div class="form-group full">
+          <label>Trabajadores del Proyecto <span class="tooltip-trigger" data-tip="Selecciona los trabajadores que participarán en este proyecto. Mantén clic y desliza para seleccionar varios rápido.">?</span></label>
           <div class="select-all-row">
             <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="toggleTodosWorkers()">✓ Seleccionar todos</button>
             <span id="workerCount" style="font-size:12px;color:var(--muted);">0 seleccionados</span>
@@ -329,12 +409,14 @@ tr:hover td{background:var(--c5);}
 
       <div class="btn-row">
         <button class="btn btn-primary" onclick="irPaso2()">Continuar al planificador →</button>
-        <button class="btn btn-ghost" onclick="irPaso0()" style="font-size:12px;">← Inicio</button>
+        <button class="btn btn-ghost" onclick="confirmarSalida('paso0')" style="font-size:12px;">← Inicio</button>
       </div>
     </div>
   </div>
 
-  <!-- PASO 2: PLANIFICADOR -->
+  <!-- ══════════════════════════════════════════════
+       PASO 2: PLANIFICADOR
+  ══════════════════════════════════════════════ -->
   <div id="paso2" class="hidden">
 
     <div id="projectHeader" class="project-header"></div>
@@ -344,7 +426,9 @@ tr:hover td{background:var(--c5);}
       <button class="btn btn-save" onclick="guardarProyecto()">💾 Guardar proyecto</button>
       <span id="saveStatus" class="save-status">✓ Guardado</span>
       <div style="flex:1"></div>
-      <button class="btn btn-ghost" onclick="irPaso0()" style="font-size:12px;">← Inicio</button>
+      <!-- "Atrás" only goes to step 1 (edit project data) -->
+      <button class="btn btn-ghost" onclick="irPaso1Editar()" style="font-size:12px;">✏️ Editar datos</button>
+      <button class="btn btn-ghost" onclick="confirmarSalida('paso0')" style="font-size:12px;">🏠 Inicio</button>
     </div>
 
     <div class="card">
@@ -358,10 +442,17 @@ tr:hover td{background:var(--c5);}
 
         <div class="summary-bar" id="summaryBar"></div>
 
-        <!-- Recomendaciones si hay tipo seleccionado -->
+        <!-- Recomendaciones si hay tipo seleccionado — collapsible with eye -->
         <div id="recPanel" class="rec-panel hidden">
-          <h4>💡 Actividades sugeridas para este tipo de proyecto</h4>
-          <div class="rec-tags" id="recTags"></div>
+          <div class="rec-panel-header" onclick="toggleRecPanel()">
+            <span style="font-size:13px;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:6px;">
+              💡 <span id="recPanelTitle">Actividades sugeridas</span>
+            </span>
+            <span id="recPanelEye" style="font-size:18px;cursor:pointer;" title="Mostrar/ocultar actividades sugeridas">👁️</span>
+          </div>
+          <div class="rec-panel-body" id="recPanelBody">
+            <div class="rec-tags" id="recTags"></div>
+          </div>
         </div>
 
         <!-- Formulario nueva actividad -->
@@ -374,18 +465,19 @@ tr:hover td{background:var(--c5);}
               <input type="text" id="nombreActividad" placeholder="Ej: Colado de losa">
             </div>
             <div class="form-group">
-              <label>Duración (días) <span class="tooltip-trigger" data-tip="Cuántos días hábiles tomará completar esta actividad">?</span></label>
+              <label>Duración (días) <span class="tooltip-trigger" data-tip="Cuántos días hábiles tomará completar esta actividad. Los domingos se omiten automáticamente salvo que el proyecto los incluya.">?</span></label>
               <input type="number" id="duracionActividad" min="1" placeholder="Ej: 5">
             </div>
           </div>
 
+          <!-- TURNOS: solo Diurno y Nocturno, ambos seleccionables -->
           <div class="form-group" style="margin-top:12px;">
-            <label>Turno de trabajo <span class="tooltip-trigger" data-tip="Diurno: 9:00–17:00 · Nocturno: 17:00–24:00 · Ambos: turnos completos">?</span></label>
+            <label>Turno de trabajo <span class="tooltip-trigger" data-tip="Puedes seleccionar Diurno, Nocturno, o ambos a la vez.">?</span></label>
             <div class="shift-selector">
-              <button class="shift-btn active-d" id="shiftDiurno" onclick="setShift('D')">☀️ Diurno<br><small>9:00–17:00</small></button>
-              <button class="shift-btn" id="shiftNocturno" onclick="setShift('N')">🌙 Nocturno<br><small>17:00–24:00</small></button>
-              <button class="shift-btn" id="shiftAmbos" onclick="setShift('B')">⚡ Ambos turnos</button>
+              <button class="shift-btn active-d" id="shiftDiurno" onclick="toggleShift('D')">☀️ Diurno<br><small>9:00–17:00</small></button>
+              <button class="shift-btn" id="shiftNocturno" onclick="toggleShift('N')">🌙 Nocturno<br><small>17:00–24:00</small></button>
             </div>
+            <div class="shift-note" id="shiftNote">Turno: 9:00–17:00</div>
           </div>
 
           <div class="form-group" style="margin-top:12px;">
@@ -397,7 +489,11 @@ tr:hover td{background:var(--c5);}
           </div>
 
           <div class="form-group" style="margin-top:12px;">
-            <label>Asignar Trabajadores <span class="tooltip-trigger" data-tip="Selecciona quién trabajará en esta actividad.">?</span></label>
+            <label>Asignar Trabajadores <span class="tooltip-trigger" data-tip="Selecciona quién trabajará en esta actividad. Mantén clic y desliza para seleccionar varios a la vez.">?</span></label>
+            <div class="select-all-row">
+              <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="toggleTodosActWorkers()">✓ Seleccionar todos</button>
+              <span id="actWorkerCount" style="font-size:12px;color:var(--muted);">0 seleccionados</span>
+            </div>
             <div class="workers-grid" id="workersActividad"></div>
           </div>
 
@@ -460,6 +556,19 @@ tr:hover td{background:var(--c5);}
 
 </div>
 
+<!-- ── MODAL CONFIRMACIÓN SALIDA ── -->
+<div class="modal-overlay" id="exitModal">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ ¿Salir sin guardar?</div>
+    <div class="modal-body">Tienes cambios sin guardar. Si sales ahora perderás el progreso actual del proyecto.<br><br>¿Qué deseas hacer?</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('exitModal')">Cancelar</button>
+      <button class="btn btn-save" onclick="guardarYSalir()">💾 Guardar y salir</button>
+      <button class="btn btn-danger" onclick="salirSinGuardar()">Salir sin guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -480,28 +589,28 @@ const WORKERS=[
 ];
 
 const PROJECT_TYPES=[
-  {id:'construccion',icon:'🏗️',nombre:'Construcción',shift:'D',actividades:[
+  {id:'construccion',icon:'🏗️',nombre:'Construcción',shift:['D'],actividades:[
     'Limpieza y nivelación del terreno','Replanteo y trazado','Excavación de fundaciones',
     'Armado y colado de fundaciones','Levantamiento de paredes','Armado y colado de losa',
     'Instalación eléctrica','Instalación hidráulica','Repello y afinado de paredes',
     'Colocación de piso y cerámica','Instalación de puertas y ventanas','Pintura interior y exterior',
     'Instalación de cielo falso','Acabados finales','Limpieza general de obra'
   ]},
-  {id:'remodelacion',icon:'🔨',nombre:'Remodelación',shift:'D',actividades:[
+  {id:'remodelacion',icon:'🔨',nombre:'Remodelación',shift:['D'],actividades:[
     'Inspección y diagnóstico inicial','Demolición de elementos a remover',
     'Limpieza y retiro de escombros','Reparación de estructura','Resane y preparación de paredes',
     'Instalación eléctrica nueva','Instalación hidráulica nueva','Colocación de piso',
     'Colocación de cerámica en baños y cocina','Pintura general','Instalación de puertas y ventanas',
     'Acabados y detalles finales','Limpieza final'
   ]},
-  {id:'redes',icon:'🌐',nombre:'Puntos de Red',shift:'N',actividades:[
+  {id:'redes',icon:'🌐',nombre:'Puntos de Red',shift:['N'],actividades:[
     'Levantamiento de infraestructura existente','Diseño y planificación de topología',
     'Instalación de canaletas y ductos','Tendido de cable UTP/fibra óptica',
     'Instalación de puntos de acceso (AP)','Instalación de switches y patch panels',
     'Certificación de puntos de red','Configuración de equipos activos',
     'Pruebas de conectividad y velocidad','Documentación de red','Entrega y capacitación al cliente'
   ]},
-  {id:'datacenter',icon:'🖥️',nombre:'Data Center',shift:'N',actividades:[
+  {id:'datacenter',icon:'🖥️',nombre:'Data Center',shift:['N'],actividades:[
     'Auditoría del cableado existente','Diseño de distribución de racks',
     'Instalación y etiquetado de racks','Ordenamiento de cableado UTP/fibra',
     'Instalación de bandejas y organizadores','Tendido de nuevos cables certificados',
@@ -509,13 +618,13 @@ const PROJECT_TYPES=[
     'Instalación de sistema de monitoreo','Pruebas de failover y redundancia',
     'Documentación técnica completa','Entrega formal y capacitación'
   ]},
-  {id:'soldadura',icon:'⚙️',nombre:'Soldadura / Metálica',shift:'D',actividades:[
+  {id:'soldadura',icon:'⚙️',nombre:'Soldadura / Metálica',shift:['D'],actividades:[
     'Diseño y planos de estructura metálica','Corte y preparación de materiales',
     'Armado de estructura','Soldadura de elementos','Pulido y limpieza de soldaduras',
     'Aplicación de anticorrosivo','Pintura de estructura','Instalación en sitio',
     'Pruebas de carga','Entrega final'
   ]},
-  {id:'pintura',icon:'🎨',nombre:'Pintura',shift:'D',actividades:[
+  {id:'pintura',icon:'🎨',nombre:'Pintura',shift:['D'],actividades:[
     'Limpieza y preparación de superficies','Lijado general','Aplicación de sellador',
     'Primera mano de pintura','Segunda mano de pintura','Pintura de acabados y bordes',
     'Retoque final','Limpieza de área'
@@ -530,8 +639,10 @@ let selectedActWorkers=new Set();
 let historial=[];
 let futuro=[];
 let selectedProjectType=null;
-let currentShift='D'; // D=Diurno, N=Nocturno, B=Ambos
+let currentShifts=new Set(['D']); // Set: 'D', 'N', or both
 let editingProjectId=null;
+let pendingExitTarget=null;
+let trabajarDomingo=false;
 
 // ── TOAST ──────────────────────────────────────────────────────────
 function showToast(msg,type=''){
@@ -540,6 +651,46 @@ function showToast(msg,type=''){
   t.className='toast '+(type||'');
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function cerrarModal(id){
+  document.getElementById(id).classList.remove('show');
+}
+function abrirModal(id){
+  document.getElementById(id).classList.add('show');
+}
+
+// ── SALIDA CON ADVERTENCIA ─────────────────────────────────────────
+function confirmarSalida(destino){
+  pendingExitTarget=destino;
+  // If there are activities or the project has a name, warn
+  if(actividades.length>0 || (proyecto.nombre)){
+    abrirModal('exitModal');
+  } else {
+    irDirect(destino);
+  }
+}
+function guardarYSalir(){
+  guardarProyecto();
+  cerrarModal('exitModal');
+  irDirect(pendingExitTarget);
+}
+function salirSinGuardar(){
+  cerrarModal('exitModal');
+  irDirect(pendingExitTarget);
+}
+function irDirect(destino){
+  document.getElementById('paso0').classList.add('hidden');
+  document.getElementById('paso1').classList.add('hidden');
+  document.getElementById('paso2').classList.add('hidden');
+  if(destino==='paso0'){
+    actividades=[];historial=[];futuro=[];
+    selectedProjectType=null;currentShifts=new Set(['D']);
+    editingProjectId=null;proyecto={};
+    selectedProjectWorkers.clear();selectedActWorkers.clear();
+  }
+  document.getElementById(destino).classList.remove('hidden');
 }
 
 // ── HISTORIAL ──────────────────────────────────────────────────────
@@ -569,9 +720,53 @@ document.addEventListener('keydown',e=>{
 // ── HELPERS ────────────────────────────────────────────────────────
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
 function avatarColor(id){const c=['#2d4a8a','#1a7a4a','#b03060','#6a3d9a','#b07020'];return c[(id-1)%c.length];}
-function shiftLabel(s){return s==='D'?'☀️ Diurno':s==='N'?'🌙 Nocturno':'⚡ Ambos';}
-function shiftClass(s){return s==='D'?'shift-tag-d':s==='N'?'shift-tag-n':'shift-tag-b';}
-function shiftHours(s){return s==='D'?'9:00–17:00':s==='N'?'17:00–24:00':'9:00–24:00';}
+function shiftLabel(s){
+  if(s==='D')return '☀️ Diurno';
+  if(s==='N')return '🌙 Nocturno';
+  if(s==='DN'||s==='ND')return '☀️🌙 Diurno+Nocturno';
+  return s;
+}
+function shiftClass(s){
+  if(s==='D')return 'shift-tag-d';
+  if(s==='N')return 'shift-tag-n';
+  return 'shift-tag-d'; // both — use orange-ish
+}
+function shiftHours(s){
+  if(s==='D')return '9:00–17:00';
+  if(s==='N')return '17:00–24:00';
+  return '9:00–24:00';
+}
+
+// ── SUNDAY HANDLING ────────────────────────────────────────────────
+function esDomingo(date){return date.getDay()===0;}
+
+// Given a start date and duration (work days), compute the end date skipping sundays if needed
+function calcularFechaFin(inicio,duracion){
+  let d=new Date(inicio);
+  let count=0;
+  while(count<duracion){
+    if(trabajarDomingo||!esDomingo(d)){count++;}
+    if(count<duracion)d.setDate(d.getDate()+1);
+  }
+  return d;
+}
+
+// Advance past Sunday if landing on one and not working Sundays
+function skipSunday(date){
+  if(!trabajarDomingo && esDomingo(date)){
+    const d=new Date(date);d.setDate(d.getDate()+1);return d;
+  }
+  return date;
+}
+
+// ── COLLAPSIBLE ────────────────────────────────────────────────────
+function toggleCollapsible(id){
+  const header=document.getElementById(id+'Header');
+  const body=document.getElementById(id+'Body');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  header.classList.toggle('open',!isOpen);
+}
 
 // ── NAVEGACIÓN ─────────────────────────────────────────────────────
 function irPaso0(){
@@ -584,14 +779,22 @@ function irPaso1Nuevo(){
   editingProjectId=null;
   actividades=[];historial=[];futuro=[];
   selectedProjectWorkers.clear();selectedActWorkers.clear();
-  selectedProjectType=null;currentShift='D';
+  selectedProjectType=null;currentShifts=new Set(['D']);
   document.getElementById('nombreProyecto').value='';
   document.getElementById('ubicacionProyecto').value='';
   document.getElementById('fechaFinal').value='';
   document.getElementById('fechaInicio').value=new Date().toISOString().split('T')[0];
+  document.getElementById('trabajarDomingo').checked=false;
+  trabajarDomingo=false;
   buildProjTypeGrid();
   buildProjectWorkers();
   document.getElementById('paso0').classList.add('hidden');
+  document.getElementById('paso1').classList.remove('hidden');
+}
+
+// Go back to step 1 to edit project data WITHOUT wiping activities
+function irPaso1Editar(){
+  document.getElementById('paso2').classList.add('hidden');
   document.getElementById('paso1').classList.remove('hidden');
 }
 
@@ -608,6 +811,7 @@ function irPaso2(){
   proyecto.inicio=new Date(ini+'T00:00:00');
   proyecto.fin=fin?new Date(fin+'T00:00:00'):null;
   proyecto.tipo=selectedProjectType;
+  trabajarDomingo=document.getElementById('trabajarDomingo').checked;
   document.getElementById('paso1').classList.add('hidden');
   document.getElementById('paso2').classList.remove('hidden');
   renderProjectHeader();
@@ -617,7 +821,7 @@ function irPaso2(){
   actualizarSummary();
   dibujarTabla();
   renderRecPanel();
-  setShift(currentShift);
+  renderShiftButtons();
 }
 
 // ── TIPO DE PROYECTO ───────────────────────────────────────────────
@@ -630,15 +834,34 @@ function buildProjTypeGrid(){
     d.innerHTML=`<div class="ptc-icon">${t.icon}</div><div class="ptc-name">${t.nombre}</div>`;
     d.onclick=()=>{
       selectedProjectType=selectedProjectType===t.id?null:t.id;
-      // auto-set default shift
       if(selectedProjectType){
         const pt=PROJECT_TYPES.find(x=>x.id===selectedProjectType);
-        if(pt){currentShift=pt.shift;}
+        if(pt){currentShifts=new Set(pt.shift);}
       }
       buildProjTypeGrid();
+      // Update label in header
+      const label=selectedProjectType?PROJECT_TYPES.find(x=>x.id===selectedProjectType).icon+' '+PROJECT_TYPES.find(x=>x.id===selectedProjectType).nombre:'Seleccionar tipo de proyecto…';
+      document.getElementById('projTypeLabelText').textContent=selectedProjectType?PROJECT_TYPES.find(x=>x.id===selectedProjectType).nombre:'Seleccionar tipo de proyecto…';
+      // Close collapsible after selection
+      if(selectedProjectType)toggleCollapsible('projType');
     };
     grid.appendChild(d);
   });
+  // Update header label
+  if(selectedProjectType){
+    const pt=PROJECT_TYPES.find(x=>x.id===selectedProjectType);
+    document.getElementById('projTypeLabelText').textContent=pt?pt.icon+' '+pt.nombre:'Seleccionar tipo de proyecto…';
+  } else {
+    document.getElementById('projTypeLabelText').textContent='Seleccionar tipo de proyecto…';
+  }
+}
+
+// ── REC PANEL ──────────────────────────────────────────────────────
+let recPanelOpen=false;
+function toggleRecPanel(){
+  recPanelOpen=!recPanelOpen;
+  document.getElementById('recPanelBody').classList.toggle('open',recPanelOpen);
+  document.getElementById('recPanelEye').textContent=recPanelOpen?'🙈':'👁️';
 }
 
 function renderRecPanel(){
@@ -648,28 +871,103 @@ function renderRecPanel(){
   const pt=PROJECT_TYPES.find(t=>t.id===selectedProjectType);
   if(!pt){panel.classList.add('hidden');return;}
   panel.classList.remove('hidden');
+  document.getElementById('recPanelTitle').textContent=`Actividades sugeridas — ${pt.nombre} (${pt.actividades.length})`;
   tags.innerHTML='';
   pt.actividades.forEach(act=>{
     const span=document.createElement('span');
-    span.className='rec-tag';
+    span.className='rec-tag-add';
     span.textContent='+ '+act;
-    span.title='Haz clic para agregar esta actividad';
+    span.title='Clic para rellenar el formulario con esta actividad';
     span.onclick=()=>{
       document.getElementById('nombreActividad').value=act;
-      // auto shift from type
-      setShift(pt.shift);
+      currentShifts=new Set(pt.shift);
+      renderShiftButtons();
       document.getElementById('nombreActividad').focus();
+      document.getElementById('nombreActividad').scrollIntoView({behavior:'smooth',block:'center'});
     };
     tags.appendChild(span);
   });
 }
 
-// ── TURNO ──────────────────────────────────────────────────────────
-function setShift(s){
-  currentShift=s;
-  document.getElementById('shiftDiurno').className='shift-btn'+(s==='D'?' active-d':'');
-  document.getElementById('shiftNocturno').className='shift-btn'+(s==='N'?' active-n':'');
-  document.getElementById('shiftAmbos').className='shift-btn'+(s==='B'?' active-b':'');
+// ── TURNOS: D y N independientes, ambos a la vez posible ──────────
+function toggleShift(s){
+  if(currentShifts.has(s)&&currentShifts.size>1){
+    currentShifts.delete(s);
+  } else if(currentShifts.has(s)&&currentShifts.size===1){
+    // keep at least one
+  } else {
+    currentShifts.add(s);
+  }
+  renderShiftButtons();
+}
+
+function renderShiftButtons(){
+  const hasD=currentShifts.has('D');
+  const hasN=currentShifts.has('N');
+  document.getElementById('shiftDiurno').className='shift-btn'+(hasD?' active-d':'');
+  document.getElementById('shiftNocturno').className='shift-btn'+(hasN?' active-n':'');
+  let note='';
+  if(hasD&&hasN)note='Turno: 9:00–24:00 (Diurno + Nocturno)';
+  else if(hasD)note='Turno: 9:00–17:00';
+  else note='Turno: 17:00–24:00';
+  document.getElementById('shiftNote').textContent=note;
+}
+
+function getShiftCode(){
+  if(currentShifts.has('D')&&currentShifts.has('N'))return 'B';
+  if(currentShifts.has('N'))return 'N';
+  return 'D';
+}
+
+// ── DRAG-SELECT FOR WORKERS ────────────────────────────────────────
+let dragSelectActive=false;
+let dragSelectMode=null; // 'add' or 'remove'
+let dragSelectSet=null;  // ref to the Set being operated on
+let dragSelectGridId=null;
+
+function startDragSelect(e,grid,set,rebuildFn){
+  dragSelectActive=true;
+  dragSelectSet=set;
+  dragSelectGridId=grid;
+  // determine mode from first element clicked
+  const chip=e.target.closest('.worker-chip');
+  if(!chip)return;
+  const wid=parseInt(chip.dataset.wid);
+  dragSelectMode=set.has(wid)?'remove':'add';
+  applyDragToggle(chip,wid);
+  rebuildFn();
+  e.preventDefault();
+}
+function applyDragToggle(chip,wid){
+  if(chip.classList.contains('disabled'))return;
+  if(dragSelectMode==='add')dragSelectSet.add(wid);
+  else dragSelectSet.delete(wid);
+}
+function moveDragSelect(e,rebuildFn){
+  if(!dragSelectActive)return;
+  // Touch support
+  let target=e.target;
+  if(e.touches){
+    const t=e.touches[0];
+    target=document.elementFromPoint(t.clientX,t.clientY);
+  }
+  const chip=target?target.closest('.worker-chip'):null;
+  if(!chip)return;
+  const wid=parseInt(chip.dataset.wid);
+  if(!chip.dataset.applied){
+    applyDragToggle(chip,wid);
+    chip.dataset.applied='1';
+    rebuildFn();
+  }
+}
+function endDragSelect(){
+  if(!dragSelectActive)return;
+  dragSelectActive=false;
+  dragSelectSet=null;
+  dragSelectMode=null;
+  dragSelectGridId=null;
+  // clear applied markers
+  document.querySelectorAll('[data-applied]').forEach(el=>el.removeAttribute('data-applied'));
 }
 
 // ── PROJECT WORKERS ────────────────────────────────────────────────
@@ -679,6 +977,7 @@ function buildProjectWorkers(){
   WORKERS.forEach(w=>{
     const chip=document.createElement('div');
     chip.className='worker-chip'+(selectedProjectWorkers.has(w.id)?' selected':'');
+    chip.dataset.wid=w.id;
     chip.innerHTML=`
       <div class="worker-avatar" style="background:${avatarColor(w.id)}">${initials(w.nombre)}</div>
       <div class="worker-info">
@@ -686,14 +985,21 @@ function buildProjectWorkers(){
         <div class="worker-role">${w.rol}</div>
       </div>
       <div class="check-icon">✓</div>`;
-    chip.onclick=()=>{
+    chip.addEventListener('click',()=>{
+      if(dragSelectActive)return;
       if(selectedProjectWorkers.has(w.id))selectedProjectWorkers.delete(w.id);
       else selectedProjectWorkers.add(w.id);
       buildProjectWorkers();
-    };
+    });
     grid.appendChild(chip);
   });
   document.getElementById('workerCount').textContent=selectedProjectWorkers.size+' seleccionado'+(selectedProjectWorkers.size!==1?'s':'');
+
+  // drag-select bindings
+  grid.onmousedown=e=>{if(e.button===0)startDragSelect(e,'workersGrid',selectedProjectWorkers,buildProjectWorkers);};
+  grid.ontouchstart=e=>startDragSelect(e,'workersGrid',selectedProjectWorkers,buildProjectWorkers);
+  grid.onmousemove=e=>moveDragSelect(e,buildProjectWorkers);
+  grid.ontouchmove=e=>{e.preventDefault();moveDragSelect(e,buildProjectWorkers);};
 }
 
 function toggleTodosWorkers(){
@@ -706,9 +1012,12 @@ function getProjectWorkers(){return WORKERS.filter(w=>selectedProjectWorkers.has
 
 // ── ACTIVITY WORKERS ───────────────────────────────────────────────
 function workerLibreDurante(wid,ini,dur,exId=null){
-  for(let i=0;i<dur;i++){
-    const f=new Date(ini);f.setDate(f.getDate()+i);
-    if(actividades.some(a=>a.id!==exId&&a.workers.includes(wid)&&f>=a.inicio&&f<=a.fin))return false;
+  for(let i=0,d=new Date(ini);i<dur;){
+    if(trabajarDomingo||!esDomingo(d)){
+      if(actividades.some(a=>a.id!==exId&&a.workers.includes(wid)&&d>=a.inicio&&d<=a.fin))return false;
+      i++;
+    }
+    if(i<dur)d.setDate(d.getDate()+1);
   }
   return true;
 }
@@ -717,7 +1026,8 @@ function workerDisponibleDesde(wid){
   let latest=null;
   actividades.forEach(a=>{if(a.workers.includes(wid)&&(!latest||a.fin>latest))latest=new Date(a.fin);});
   if(!latest)return null;
-  const d=new Date(latest);d.setDate(d.getDate()+1);return d;
+  const d=new Date(latest);d.setDate(d.getDate()+1);
+  return skipSunday(d);
 }
 
 function buildActWorkers(depId,duracion){
@@ -725,8 +1035,8 @@ function buildActWorkers(depId,duracion){
   grid.innerHTML='';
   const pw=getProjectWorkers();
   const dep=actividades.find(a=>a.id==depId);
-  let propStart=dep?new Date(dep.fin):(proyecto.inicio?new Date(proyecto.inicio):new Date());
-  if(dep)propStart.setDate(propStart.getDate()+1);
+  let propStart=dep?skipSunday(new Date(dep.fin)):(proyecto.inicio?skipSunday(new Date(proyecto.inicio)):new Date());
+  if(dep){propStart=new Date(dep.fin);propStart.setDate(propStart.getDate()+1);propStart=skipSunday(propStart);}
   pw.forEach(w=>{
     const libre=!duracion||workerLibreDurante(w.id,propStart,duracion||1);
     const dispDesde=workerDisponibleDesde(w.id);
@@ -735,6 +1045,7 @@ function buildActWorkers(depId,duracion){
     if(selectedActWorkers.has(w.id))cls+=' selected';
     if(!libre&&!selectedActWorkers.has(w.id))cls+=' disabled';
     chip.className=cls;
+    chip.dataset.wid=w.id;
     const dateStr=dispDesde?dispDesde.toLocaleDateString('es-SV',{day:'numeric',month:'short'}):'';
     const availText=libre
       ?`<div class="worker-avail">Disponible</div>`
@@ -747,22 +1058,43 @@ function buildActWorkers(depId,duracion){
         ${availText}
       </div>
       <div class="check-icon">✓</div>`;
-    chip.onclick=()=>{
+    chip.addEventListener('click',()=>{
+      if(dragSelectActive)return;
       if(!libre&&!selectedActWorkers.has(w.id))return;
       if(selectedActWorkers.has(w.id))selectedActWorkers.delete(w.id);
       else selectedActWorkers.add(w.id);
       buildActWorkers(depId,duracion);
       checkActAlert();
-    };
+    });
     grid.appendChild(chip);
   });
+  document.getElementById('actWorkerCount').textContent=selectedActWorkers.size+' seleccionado'+(selectedActWorkers.size!==1?'s':'');
+
+  // drag-select bindings
+  grid.onmousedown=e=>{if(e.button===0)startDragSelect(e,'workersActividad',selectedActWorkers,()=>{buildActWorkers(depId,duracion);checkActAlert();});};
+  grid.ontouchstart=e=>startDragSelect(e,'workersActividad',selectedActWorkers,()=>{buildActWorkers(depId,duracion);checkActAlert();});
+  grid.onmousemove=e=>moveDragSelect(e,()=>{buildActWorkers(depId,duracion);checkActAlert();});
+  grid.ontouchmove=e=>{e.preventDefault();moveDragSelect(e,()=>{buildActWorkers(depId,duracion);checkActAlert();});};
+}
+
+function toggleTodosActWorkers(){
+  const pw=getProjectWorkers();
+  if(selectedActWorkers.size===pw.length)selectedActWorkers.clear();
+  else pw.forEach(w=>selectedActWorkers.add(w.id));
+  const depId=document.getElementById('dependencia').value;
+  const dur=parseInt(document.getElementById('duracionActividad').value)||1;
+  buildActWorkers(depId,dur);
+  checkActAlert();
 }
 
 function updateDepInfo(depId){
   const info=document.getElementById('depInfo');
   if(!depId){info.textContent='Esta actividad comenzará desde el inicio del proyecto';return;}
   const dep=actividades.find(a=>a.id==depId);
-  if(dep){const d=new Date(dep.fin);d.setDate(d.getDate()+1);info.textContent=`Comenzará el ${d.toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;}
+  if(dep){
+    let d=new Date(dep.fin);d.setDate(d.getDate()+1);d=skipSunday(d);
+    info.textContent=`Comenzará el ${d.toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+  }
 }
 
 function checkActAlert(){
@@ -787,8 +1119,11 @@ function actualizarDependencias(){
 }
 
 function calcularInicio(dep){
-  if(dep){const f=new Date(dep.fin);f.setDate(f.getDate()+1);return f;}
-  return new Date(proyecto.inicio);
+  if(dep){
+    const d=new Date(dep.fin);d.setDate(d.getDate()+1);
+    return skipSunday(d);
+  }
+  return skipSunday(new Date(proyecto.inicio));
 }
 
 function calcularFase(dep){if(!dep)return 1;return dep.fase+1;}
@@ -802,7 +1137,7 @@ function agregarActividad(){
   if(selectedActWorkers.size===0){alert('Selecciona al menos un trabajador');return;}
   const dep=actividades.find(a=>a.id==depId);
   const inicio=calcularInicio(dep);
-  const fin=new Date(inicio);fin.setDate(fin.getDate()+duracion-1);
+  const fin=calcularFechaFin(inicio,duracion);
   if(proyecto.fin&&fin>proyecto.fin){
     if(!confirm(`La actividad termina el ${fin.toLocaleDateString('es-SV')} y supera la fecha fin del proyecto. ¿Continuar?`))return;
   }
@@ -819,7 +1154,7 @@ function agregarActividad(){
     inicio,fin,
     depende:depId||null,
     fase:calcularFase(dep),
-    turno:currentShift
+    turno:getShiftCode()
   });
   actualizarDependencias();dibujarTabla();actualizarSummary();limpiarFormulario();
   showToast('Actividad agregada ✓','success');
@@ -830,10 +1165,10 @@ function limpiarFormulario(){
   document.getElementById('duracionActividad').value='';
   document.getElementById('dependencia').value='';
   selectedActWorkers.clear();
-  // keep shift as-is (user preference)
   buildActWorkers('',1);
   document.getElementById('depInfo').textContent='Esta actividad comenzará desde el inicio del proyecto';
   document.getElementById('alertActividad').innerHTML='';
+  document.getElementById('actWorkerCount').textContent='0 seleccionados';
 }
 
 function eliminarActividad(id){
@@ -853,11 +1188,13 @@ function actualizarSummary(){
   const ocupadosHoy=new Set();
   actividades.forEach(a=>{if(hoy>=a.inicio&&hoy<=a.fin)a.workers.forEach(w=>ocupadosHoy.add(w));});
   const tipoLabel=selectedProjectType?(PROJECT_TYPES.find(t=>t.id===selectedProjectType)||{}).nombre:'—';
+  const domLabel=trabajarDomingo?'<div class="stat-pill warn">🗓️ <span>Incluye domingos</span></div>':'';
   bar.innerHTML=`
     <div class="stat-pill">Actividades: <span>${actividades.length}</span></div>
     <div class="stat-pill">Equipo: <span>${total} trabajadores</span></div>
     <div class="stat-pill ${ocupadosHoy.size>0?'warn':'ok'}">Ocupados hoy: <span>${ocupadosHoy.size}</span></div>
     ${selectedProjectType?`<div class="stat-pill">Tipo: <span>${tipoLabel}</span></div>`:''}
+    ${domLabel}
   `;
 }
 
@@ -875,7 +1212,11 @@ function dibujarTabla(){
       return w?`<span class="worker-tag">${w.nombre.split(' ')[0]}</span>`:'';
     }).join('');
     const t=a.turno||'D';
-    const shiftSpan=`<span class="${shiftClass(t)}">${t==='D'?'☀️':t==='N'?'🌙':'⚡'} ${t==='D'?'Diurno':t==='N'?'Nocturno':'Ambos'}</span>`;
+    let shiftTxt='',shiftCls='shift-tag-d';
+    if(t==='D'){shiftTxt='☀️ Diurno';shiftCls='shift-tag-d';}
+    else if(t==='N'){shiftTxt='🌙 Nocturno';shiftCls='shift-tag-n';}
+    else{shiftTxt='☀️🌙 D+N';shiftCls='shift-tag-d';}
+    const shiftSpan=`<span class="${shiftCls}">${shiftTxt}</span>`;
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>${i+1}</td>
@@ -987,25 +1328,25 @@ function exportarExcel(){
     const t=a.turno||'D';
     data.push([
       i+1,`F${a.fase}`,a.nombre,`${a.duracion} días`,
-      t==='D'?'Diurno':t==='N'?'Nocturno':'Ambos',
+      t==='D'?'Diurno':t==='N'?'Nocturno':'Diurno+Nocturno',
       shiftHours(t),
       a.inicio.toLocaleDateString('es-SV'),
       a.fin.toLocaleDateString('es-SV'),
       wnames,depNombre
     ]);
   });
-  // Project info sheet
   const info=[
     ['Proyecto',proyecto.nombre],
     ['Ubicación',proyecto.ubicacion||'—'],
     ['Tipo',selectedProjectType?(PROJECT_TYPES.find(t=>t.id===selectedProjectType)||{}).nombre||'—':'—'],
     ['Inicio',proyecto.inicio.toLocaleDateString('es-SV')],
     ['Fin Estimado',proyecto.fin?proyecto.fin.toLocaleDateString('es-SV'):'Por definir'],
+    ['Trabaja Domingos',trabajarDomingo?'Sí':'No'],
     ['Equipo',getProjectWorkers().map(w=>w.nombre).join(', ')]
   ];
   const wb=XLSX.utils.book_new();
   const ws1=XLSX.utils.aoa_to_sheet(data);
-  ws1['!cols']=[{wch:4},{wch:6},{wch:32},{wch:12},{wch:12},{wch:14},{wch:12},{wch:12},{wch:40},{wch:24}];
+  ws1['!cols']=[{wch:4},{wch:6},{wch:32},{wch:12},{wch:18},{wch:14},{wch:12},{wch:12},{wch:40},{wch:24}];
   XLSX.utils.book_append_sheet(wb,ws1,'Plan de Trabajo');
   const ws2=XLSX.utils.aoa_to_sheet(info);
   ws2['!cols']=[{wch:20},{wch:40}];
@@ -1030,7 +1371,7 @@ function exportarPDF(){
     const wnames=a.workers.map(wid=>(WORKERS.find(x=>x.id===wid)||{}).nombre.split(' ')[0]||'').join(', ');
     const t=a.turno||'D';
     return [i+1,`F${a.fase}`,a.nombre,`${a.duracion}d`,
-      t==='D'?'Diurno':t==='N'?'Nocturno':'Ambos',
+      t==='D'?'Diurno':t==='N'?'Nocturno':'D+N',
       a.inicio.toLocaleDateString('es-SV'),
       a.fin.toLocaleDateString('es-SV'),
       wnames,depNombre];
@@ -1061,7 +1402,6 @@ function exportarGanttImg(){
 
 function exportarGanttPDF(){
   if(!actividades.length){showToast('No hay actividades para exportar','warn');return;}
-  // Make sure gantt is drawn first
   if(!ganttChart)dibujarGantt();
   setTimeout(()=>{
     const {jsPDF}=window.jspdf;
@@ -1090,6 +1430,7 @@ function buildSavePayload(){
     fin:proyecto.fin?proyecto.fin.getTime():null,
     tipo:selectedProjectType,
     workers:[...selectedProjectWorkers],
+    trabajarDomingo:trabajarDomingo,
     actividades:actividades.map(a=>({...a,inicio:a.inicio.getTime(),fin:a.fin.getTime()})),
     savedAt:Date.now()
   };
@@ -1098,13 +1439,11 @@ function buildSavePayload(){
 function guardarProyecto(){
   const payload=buildSavePayload();
   editingProjectId=payload.id;
-  // Save in list
   let lista=getSavedList();
   const idx=lista.findIndex(p=>p.id===payload.id);
   if(idx>=0)lista[idx]=payload;
   else lista.push(payload);
   localStorage.setItem('sym_projects',JSON.stringify(lista));
-  // Flash status
   const ss=document.getElementById('saveStatus');
   ss.classList.add('show');
   setTimeout(()=>ss.classList.remove('show'),2500);
@@ -1152,7 +1491,6 @@ function eliminarGuardado(id){
 
 function cargarProyecto(p){
   editingProjectId=p.id;
-  // Restore state
   proyecto={
     nombre:p.nombre,
     ubicacion:p.ubicacion,
@@ -1163,15 +1501,15 @@ function cargarProyecto(p){
   selectedProjectType=p.tipo||null;
   selectedProjectWorkers=new Set(p.workers||[]);
   actividades=(p.actividades||[]).map(a=>({...a,inicio:new Date(a.inicio),fin:new Date(a.fin)}));
+  trabajarDomingo=p.trabajarDomingo||false;
   historial=[];futuro=[];
-  // Prefill step 1 fields
   document.getElementById('nombreProyecto').value=p.nombre;
   document.getElementById('ubicacionProyecto').value=p.ubicacion||'';
   document.getElementById('fechaInicio').value=new Date(p.inicio).toISOString().split('T')[0];
   document.getElementById('fechaFinal').value=p.fin?new Date(p.fin).toISOString().split('T')[0]:'';
+  document.getElementById('trabajarDomingo').checked=trabajarDomingo;
   buildProjTypeGrid();
   buildProjectWorkers();
-  // Go directly to step 2
   document.getElementById('paso0').classList.add('hidden');
   document.getElementById('paso1').classList.add('hidden');
   document.getElementById('paso2').classList.remove('hidden');
@@ -1183,10 +1521,15 @@ function cargarProyecto(p){
   dibujarTabla();
   renderRecPanel();
   const pt=selectedProjectType?PROJECT_TYPES.find(t=>t.id===selectedProjectType):null;
-  setShift(pt?pt.shift:'D');
+  currentShifts=pt?new Set(pt.shift):new Set(['D']);
+  renderShiftButtons();
   actualizarBotonesHistorial();
   showToast(`Proyecto "${p.nombre}" cargado ✓`,'success');
 }
+
+// ── GLOBAL DRAG-SELECT END ─────────────────────────────────────────
+document.addEventListener('mouseup',endDragSelect);
+document.addEventListener('touchend',endDragSelect);
 
 // ── INIT ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1200,10 +1543,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     const dur=parseInt(document.getElementById('duracionActividad').value)||1;
     buildActWorkers(depId,dur);checkActAlert();
   });
+  document.getElementById('trabajarDomingo').addEventListener('change',function(){
+    trabajarDomingo=this.checked;
+  });
   document.getElementById('fechaInicio').value=new Date().toISOString().split('T')[0];
   buildProjTypeGrid();
   buildProjectWorkers();
-  // Check if there are saved projects to hint
   const saved=getSavedList();
   if(saved.length){
     document.getElementById('btnCargar').querySelector('.wc-sub').textContent=`${saved.length} proyecto${saved.length>1?'s':''} guardado${saved.length>1?'s':''} disponible${saved.length>1?'s':''}`;
