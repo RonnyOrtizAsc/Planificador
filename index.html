@@ -385,17 +385,6 @@ tr:hover td{background:var(--c5);}
           </div>
         </div>
 
-        <!-- DOMINGO -->
-        <div class="form-group full">
-          <div class="sunday-row">
-            <label class="sunday-toggle">
-              <input type="checkbox" id="trabajarDomingo">
-              <span class="sunday-slider"></span>
-            </label>
-            <span>🗓️ <strong>Trabajar domingos</strong> &mdash; por defecto el domingo es día de descanso. Activa esto si el proyecto requiere trabajar en domingos.</span>
-          </div>
-        </div>
-
         <!-- TRABAJADORES -->
         <div class="form-group full">
           <label>Trabajadores del Proyecto <span class="tooltip-trigger" data-tip="Selecciona los trabajadores que participarán en este proyecto. Mantén clic y desliza para seleccionar varios rápido.">?</span></label>
@@ -425,8 +414,15 @@ tr:hover td{background:var(--c5);}
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
       <button class="btn btn-save" onclick="guardarProyecto()">💾 Guardar proyecto</button>
       <span id="saveStatus" class="save-status">✓ Guardado</span>
+      <!-- Domingo toggle — visible en el planificador -->
+      <div class="sunday-row" style="margin-top:0;padding:6px 12px;font-size:12px;">
+        <label class="sunday-toggle">
+          <input type="checkbox" id="trabajarDomingo" onchange="onDomingoChange()">
+          <span class="sunday-slider"></span>
+        </label>
+        <span>🗓️ Trabajar domingos</span>
+      </div>
       <div style="flex:1"></div>
-      <!-- "Atrás" only goes to step 1 (edit project data) -->
       <button class="btn btn-ghost" onclick="irPaso1Editar()" style="font-size:12px;">✏️ Editar datos</button>
       <button class="btn btn-ghost" onclick="confirmarSalida('paso0')" style="font-size:12px;">🏠 Inicio</button>
     </div>
@@ -811,7 +807,8 @@ function irPaso2(){
   proyecto.inicio=new Date(ini+'T00:00:00');
   proyecto.fin=fin?new Date(fin+'T00:00:00'):null;
   proyecto.tipo=selectedProjectType;
-  trabajarDomingo=document.getElementById('trabajarDomingo').checked;
+  trabajarDomingo=false; // default off in new projects
+  document.getElementById('trabajarDomingo').checked=false;
   document.getElementById('paso1').classList.add('hidden');
   document.getElementById('paso2').classList.remove('hidden');
   renderProjectHeader();
@@ -1503,7 +1500,6 @@ function cargarProyecto(p){
   actividades=(p.actividades||[]).map(a=>({...a,inicio:new Date(a.inicio),fin:new Date(a.fin)}));
   trabajarDomingo=p.trabajarDomingo||false;
   historial=[];futuro=[];
-  document.getElementById('nombreProyecto').value=p.nombre;
   document.getElementById('ubicacionProyecto').value=p.ubicacion||'';
   document.getElementById('fechaInicio').value=new Date(p.inicio).toISOString().split('T')[0];
   document.getElementById('fechaFinal').value=p.fin?new Date(p.fin).toISOString().split('T')[0]:'';
@@ -1527,6 +1523,29 @@ function cargarProyecto(p){
   showToast(`Proyecto "${p.nombre}" cargado ✓`,'success');
 }
 
+// ── DOMINGO CHANGE — recalcula fechas en tiempo real ──────────────
+function onDomingoChange(){
+  trabajarDomingo=document.getElementById('trabajarDomingo').checked;
+  // Recalculate all activity dates preserving order and dependencies
+  const recalc=[];
+  actividades.forEach(a=>{
+    const dep=recalc.find(x=>x.id==a.depende)||actividades.find(x=>x.id==a.depende&&!recalc.find(r=>r.id===x.id));
+    const depFinal=recalc.find(x=>x.id==a.depende);
+    const inicio=calcularInicio(depFinal||null);
+    const fin=calcularFechaFin(inicio,a.duracion);
+    recalc.push({...a,inicio,fin});
+  });
+  actividades=recalc;
+  actualizarDependencias();
+  dibujarTabla();
+  actualizarSummary();
+  const depId=document.getElementById('dependencia').value;
+  const dur=parseInt(document.getElementById('duracionActividad').value)||1;
+  buildActWorkers(depId,dur);
+  updateDepInfo(depId);
+  showToast(trabajarDomingo?'Domingos incluidos en el calendario':'Domingos excluidos del calendario');
+}
+
 // ── GLOBAL DRAG-SELECT END ─────────────────────────────────────────
 document.addEventListener('mouseup',endDragSelect);
 document.addEventListener('touchend',endDragSelect);
@@ -1542,9 +1561,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     const depId=document.getElementById('dependencia').value;
     const dur=parseInt(document.getElementById('duracionActividad').value)||1;
     buildActWorkers(depId,dur);checkActAlert();
-  });
-  document.getElementById('trabajarDomingo').addEventListener('change',function(){
-    trabajarDomingo=this.checked;
   });
   document.getElementById('fechaInicio').value=new Date().toISOString().split('T')[0];
   buildProjTypeGrid();
